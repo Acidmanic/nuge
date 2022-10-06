@@ -33,6 +33,18 @@ namespace nuge.DotnetProject
         }
 
 
+
+        private PackageReference SelectPackageReference(Dictionary<string, string> dic)
+        {
+            if (dic.ContainsKey("Include") && dic.ContainsKey("Version"))
+            {
+                return new PackageReference(_projectFile.FullName,
+                    dic["Include"], dic["Version"]);
+            }
+
+            return null;
+        }
+
         public List<Reference> GetAllReferences()
         {
             var references = new List<Reference>();
@@ -41,11 +53,13 @@ namespace nuge.DotnetProject
 
             if (projectRoot != null)
             {
-                var packages = new XmlReadHelper().ExtractMappedNodeData(projectRoot, "PackageReference")
-                    .Select(map => new PackageReference(_projectFile.FullName, map["Include"], map["Version"]));
+                var packages = new XmlReadHelper()
+                    .ExtractMappedNodeData(projectRoot, "PackageReference")
+                    .Select(SelectPackageReference).Where(r => r!=null);
 
-                var frameworkReferences = new XmlReadHelper().ExtractMappedNodeData(projectRoot, "FrameworkReference")
-                    .Select(map => new PackageReference(_projectFile.FullName, map["Include"], map["Version"]));
+                var frameworkReferences = new XmlReadHelper()
+                    .ExtractMappedNodeData(projectRoot, "FrameworkReference")
+                    .Select(SelectPackageReference).Where(r => r!=null);
                 
                 var targetsName = new XmlReadHelper().FindValueFor(projectRoot, "TargetFramework");
 
