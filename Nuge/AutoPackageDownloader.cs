@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using Acidmanic.Utilities.Results;
 using Meadow.Tools.Assistant.Nuget;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.LightWeight;
 using nuge.DotnetProject;
@@ -47,7 +48,7 @@ namespace nuge
 
             var mergedProject = new MergedProject(projects);
 
-            var packages = mergedProject.PackageReferences;
+            var packages = Distincts(mergedProject);
 
             Logger.LogInformation("--------------------------------------------");
 
@@ -61,13 +62,8 @@ namespace nuge
             
             Logger.LogInformation("--------------------------------------------");
             
-            foreach (var packageReference in packages)
+            foreach (var pid in packages)
             {
-                var pid = new PackageId
-                {
-                    Id = packageReference.PackageName,
-                    Version = packageReference.PackageVersion
-                };
 
                 if (MustDownload(pid, fromScratch))
                 {
@@ -91,8 +87,8 @@ namespace nuge
                         JustWrite(path, package.Value);
 
                         Logger.LogInformation("Downloaded: {Name}: {Version}",
-                            packageReference.PackageName,
-                            packageReference.PackageVersion);
+                            pid.Id,
+                            pid.Version);
 
                         downloaded += 1;
                         fulfilled += 1;
@@ -119,6 +115,33 @@ namespace nuge
             Logger.LogInformation("Downloaded {Count} of {Total} packages.",downloaded,packages.Count);
             Logger.LogInformation("Failed {Count} of {Total} packages.",failed,packages.Count);
             Logger.LogInformation("--------------------------------------------");
+        }
+
+        private List<PackageId> Distincts(MergedProject mergedProject)
+        {
+            var result = new List<PackageId>();
+            var existing = new HashSet<string>();
+            
+            
+            foreach (var reference in mergedProject.PackageReferences)
+            {
+                var pid = new PackageId
+                {
+                    Id = reference.PackageName,
+                    Version = reference.PackageVersion
+                };
+
+                string key = reference.ToString();
+
+                if (!existing.Contains(key))
+                {
+                    existing.Add(key);
+                    
+                    result.Add(pid);
+                }
+            }
+
+            return result;
         }
 
         private bool MustDownload(PackageId package, bool fromScratch)
