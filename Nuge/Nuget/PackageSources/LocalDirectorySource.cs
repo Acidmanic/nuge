@@ -22,7 +22,7 @@ namespace nuge.Nuget.PackageSources
             int removingIntro = packageId.Id.Length + 1;
             int removingOutro = ".nupkg".Length;
 
-            Version latest = new Version(0, 0, 0);
+            System.Version latest = new System.Version(0, 0, 0);
             FileInfo latestFile = null;
 
             foreach (var packageFile in packageFiles)
@@ -35,9 +35,9 @@ namespace nuge.Nuget.PackageSources
                     return new Result<byte[]>().Succeed(File.ReadAllBytes(packageFile.FullName));
                 }
 
-                Version version;
+                System.Version version;
 
-                if (Version.TryParse(fileVersion, out version))
+                if (System.Version.TryParse(fileVersion, out version))
                 {
                     if (version.CompareTo(latest) > 0)
                     {

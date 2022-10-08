@@ -12,8 +12,10 @@ namespace nuge
             
             var downloader = new AutoPackageDownloader
             {
-                Logger = new ConsoleLogger(),
+                Logger = new ConsoleLogger().EnableAll(),
             };
+            
+            
             
             if (args.Length > 0)
             {
@@ -24,8 +26,25 @@ namespace nuge
             {
                 downloader.DownloadDirectory = args[1];
             }
+
+            bool saveLower = !IsPresent("--no-lower",args);
             
-            downloader.Download();
+            bool fromScratch = IsPresent("--scratch",args);;
+
+            downloader.DownloadUntilResolves(fromScratch, saveLower);
+        }
+
+        private static bool IsPresent(string option, string[] args)
+        {
+            foreach (var arg in args)
+            {
+                if (arg.ToLower() == option)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

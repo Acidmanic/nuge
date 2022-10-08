@@ -74,7 +74,7 @@ namespace nuge.Nuget
 
             if (!string.IsNullOrEmpty(downloadResult))
             {
-                var nuspec = NugetPackage.GetNuspecFromXml(downloadResult);
+                var nuspec = new Nuspec().LoadXml(downloadResult);
 
                 return nuspec;
             }
@@ -348,7 +348,7 @@ namespace nuge.Nuget
                     {
                         var nuspecContent = File.ReadAllText(nuspecFile);
 
-                        Nuspec package = NugetPackage.GetNuspecFromXml(nuspecContent);
+                        Nuspec package = new Nuspec().LoadXml(nuspecContent);
 
                         return new Result<Nuspec>().Succeed(package);
                     }
@@ -404,8 +404,8 @@ namespace nuge.Nuget
                 return 1;
             }
 
-            var firstParsed = Version.TryParse(first, out var firstVersion);
-            var secondsParsed = Version.TryParse(second, out var secondsVersion);
+            var firstParsed = System.Version.TryParse(first, out var firstVersion);
+            var secondsParsed = System.Version.TryParse(second, out var secondsVersion);
 
             if (!firstParsed && !secondsParsed)
             {

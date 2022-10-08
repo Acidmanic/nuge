@@ -80,6 +80,14 @@ namespace nuge.Nuget.PackageSources
             return ProvidePackage(packageId, 2000, 1);
         }
 
+
+        public Nuspec GetNuspecObject(PackageId packageId)
+        {
+            var xml = GetNuspec(packageId);
+
+            return new Nuspec().LoadXml(xml);
+        }
+        
         public string GetNuspec(PackageId packageId)
         {
             if (UpdateIndex())
@@ -88,7 +96,7 @@ namespace nuge.Nuget.PackageSources
 
                 var downloader = MakeDownloader();
 
-                var downloadResult = downloader.DownloadString(url, 1200, 5).Result;
+                var downloadResult = downloader.DownloadString(url, 3000, 5).Result;
 
                 if (downloadResult)
                 {

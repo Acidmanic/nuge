@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -57,9 +58,27 @@ namespace nuge.Nuget
         {
             var nuspecString = ReadNuspecXml(package);
 
+            nuspecString = nuspecString.Trim();
+            
             if (!string.IsNullOrEmpty(nuspecString))
             {
-                var nuspec = GetNuspecFromXml(nuspecString);
+
+
+                var st = nuspecString.IndexOf("<");
+
+                if (st != -1)
+                {
+                    nuspecString = nuspecString.Substring(st, nuspecString.Length - st);
+                }
+                
+                // if (nuspecString.StartsWith("﻿"))
+                // {
+                //     nuspecString = nuspecString.Substring(5, nuspecString.Length - 5);
+                //
+                //     Console.WriteLine("Cuted the ﻿ out of nuspec string");
+                // }
+    
+                var nuspec = new Nuspec().LoadXml(nuspecString);
 
                 return nuspec;
             }
@@ -74,29 +93,7 @@ namespace nuge.Nuget
             return xmlContent.Substring(st, xmlContent.Length - st);
         }
 
-        public static Nuspec GetNuspecFromXml(string xmlString)
-        {
-            xmlString = ClearEncodingHeader(xmlString);
-
-            var xHelper = new XmlReadHelper();
-
-            var doc = XmlReadHelper.GetDocument(xmlString);
-
-            var packageName = xHelper.FindValueFor(doc, "id");
-            var packageVersion = xHelper.FindValueFor(doc, "version");
-
-            return new Nuspec
-            {
-                Id = packageName,
-                Version = packageVersion,
-                Dependencies = xHelper.ExtractData(doc, "dependency", n => new PackageId
-                {
-                    Id = n.Attributes.GetNamedItem("id").InnerText,
-                    Version = n.Attributes.GetNamedItem("version").InnerText
-                })
-            };
-        }
-
+        
 
         public void ExtractInto(CachePackage cachePackage)
         {

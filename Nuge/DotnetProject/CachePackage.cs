@@ -1,5 +1,6 @@
 using System.IO;
 using Meadow.Tools.Assistant.Nuget;
+using nuge.Nuget;
 
 namespace nuge.DotnetProject
 {

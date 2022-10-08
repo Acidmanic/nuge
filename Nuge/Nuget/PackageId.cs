@@ -1,10 +1,10 @@
-namespace Meadow.Tools.Assistant.Nuget
+namespace nuge.Nuget
 {
     public class PackageId
     {
         public string Id { get; set; }
         
-        public string Version { get; set; }
+        public Version Version { get; set; }
 
         public PackageId()
         {
@@ -19,12 +19,20 @@ namespace Meadow.Tools.Assistant.Nuget
 
         public override string ToString()
         {
-            return Id?.Trim() + ":" + Version?.Trim();
+            return Id?.Trim() + ":" + Version?.ToString()?.Trim();
         }
 
-        public string AsFileName()
+        public string AsFileName(bool lower = true)
         {
-            return Id?.ToLower().Trim() + Version?.Trim() +".nupkg";
+            if (lower)
+            {
+                return Id?.ToLower().Trim() + "." + Version?.ToString()?.Trim() +".nupkg";    
+            }
+            else
+            {
+                return Id?.Trim() +"." + Version?.ToString()?.Trim() +".nupkg";
+            }
+            
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using nuge.Nuget;
 
 namespace Meadow.Tools.Assistant.Nuget
 {
