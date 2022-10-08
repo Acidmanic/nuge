@@ -1,50 +1,55 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.LightWeight;
+using nuge.Commands;
 
 namespace nuge
 {
     class Program
     {
+
+
+        private static List<ICommand> _commands = new List<ICommand>
+        {
+            new Nuge()
+        };
+
+
         static void Main(string[] args)
         {
 
+            var logger = new ConsoleLogger().EnableAll();
             
-            var downloader = new AutoPackageDownloader
+            
+            if (args.Length == 0)
             {
-                Logger = new ConsoleLogger().EnableAll(),
-            };
-            
-            
-            
-            if (args.Length > 0)
-            {
-                downloader.SearchDirectory = args[0];
+                Console.WriteLine("What the ghiz?");
+                return;
             }
-
-            if (args.Length > 1)
-            {
-                downloader.DownloadDirectory = args[1];
-            }
-
-            bool saveLower = !IsPresent("--no-lower",args);
             
-            bool fromScratch = IsPresent("--scratch",args);;
+            var commandname = args[0].ToLower();
 
-            downloader.DownloadUntilResolves(fromScratch, saveLower);
-        }
-
-        private static bool IsPresent(string option, string[] args)
-        {
-            foreach (var arg in args)
+            foreach (var command in _commands)
             {
-                if (arg.ToLower() == option)
+                if (command.Name.ToLower() == commandname)
                 {
-                    return true;
+                    command.SetLogger(logger);
+                    
+                    var subArgs = new string[args.Length - 1];
+                    
+                    Array.Copy(args,1, subArgs,0,args.Length-1);
+                    
+                    command.Execute(subArgs);
+
+                    return;
                 }
             }
 
-            return false;
+            Console.WriteLine("Seriously what the hell??");
+            
         }
+
+        
     }
 }
