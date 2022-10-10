@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.LightWeight;
 using nuge.Commands;
@@ -12,7 +13,8 @@ namespace nuge
 
         private static List<ICommand> _commands = new List<ICommand>
         {
-            new Nuge()
+            new Nuge(),
+            new Publish()
         };
 
 
@@ -50,6 +52,6 @@ namespace nuge
             
         }
 
-        
+       
     }
 }
