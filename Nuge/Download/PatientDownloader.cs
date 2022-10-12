@@ -21,6 +21,8 @@ namespace nuge
 
             using (var net = new TimeoutWebClient(timeout))
             {
+                
+                
                 if (Proxy != null)
                 {
                     Logger.LogDebug("Using Proxy: {Proxy}", Proxy);
@@ -28,16 +30,19 @@ namespace nuge
                     net.Proxy = new WebProxy(Proxy);
                 }
 
+                //net.Headers.Add("Connection","keep-alive");
+                
+                net.Headers.Add("Accept-Encoding","gzip, deflate");
+                
+                net.Headers.Add("Accept-Language","en-US,en;q=0.5");
+                
+                net.Headers.Add("Referer","http://litbid.ir/");
 
                 net.Headers.Add("User-Agent",
                     " Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:105.0) Gecko/20100101 Firefox/105.0");
 
                 try
                 {
-                    Logger.LogDebug("Downloading {Url} ...", url);
-
-                    //var data = await net.DownloadDataTaskAsync(url);
-
                     var data = await pickData(net, url);
 
                     Logger.LogInformation("{Url} Has been downloaded Successfully.", url);
@@ -99,8 +104,9 @@ namespace nuge
                 {
                     return result;
                 }
-
-                tries += 1;
+                Logger.LogDebug("Retrying {Count}",count);
+                
+                count += 1;
             }
             
             Logger.LogError("Unable to download {Url}, Exception: {Exception}",url,result.Exception);

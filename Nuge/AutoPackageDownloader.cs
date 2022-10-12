@@ -111,7 +111,7 @@ namespace nuge
 
                     try
                     {
-                        package = ndl.ProvidePackage(pid, 1200, 10);
+                        package = ndl.ProvidePackageData(pid, 1200, 10);
                     }
                     catch (Exception e)
                     {

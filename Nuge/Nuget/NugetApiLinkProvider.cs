@@ -21,6 +21,26 @@ namespace nuge.Nuget
             return packageResourceUrl;
         }
 
+
+        public string GetSearchApiUrl(NugetIndex index, string query)
+        {
+            var url = GetSearchApiBaseUrl(index);
+
+            url += "?q=" + query + "&prerelease=false";
+
+            return url;
+        }
+        
+        public string GetSearchApiBaseUrl(NugetIndex index)
+        {
+            var packageResourceUrl = index.Resources
+                .Where(r => r.Type == "SearchQueryService/3.5.0")
+                .Select(r => r.Id)
+                .FirstOrDefault();
+
+            return packageResourceUrl;
+        }
+
         public string GetNuspecLink(NugetIndex index, PackageId packageId)
         {
             return GetNuspecLink(index, packageId.Id, packageId.Version);

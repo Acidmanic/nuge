@@ -23,10 +23,22 @@ namespace nuge
             if (w != null)
             {
                 w.Timeout = TimeOut;
+                
+                if(w is HttpWebRequest request)
+                {
+                    request.AllowAutoRedirect = true;
+                    
+                    request.ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true;
+                    
+                    request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                }
                 return w;
             }
 
             return null;
         }
+       
+        
+        
     }
 }

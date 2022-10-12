@@ -14,7 +14,8 @@ namespace nuge
         private static List<ICommand> _commands = new List<ICommand>
         {
             new Nuge(),
-            new Publish()
+            new Publish(),
+            new FetchFamily()
         };
 
 
